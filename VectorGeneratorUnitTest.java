@@ -2,8 +2,11 @@
 import java.awt.Color;
 import java.awt.image.BufferedImage;
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.io.PrintWriter;
 import java.text.DecimalFormat;
+import javax.imageio.ImageIO;
 
 /*
  * To change this license header, choose License Headers in Project Properties.
@@ -20,34 +23,32 @@ public class VectorGeneratorUnitTest {
     /**
      * @param args the command line arguments
      */
-    public static void main(String[] args) {
-        // TODO code application logic here
+    public static void main(String[] args) throws IOException {
+        VFI_Map.Init();
+        String directory = System.getProperty("user.dir");
+        String imagePath = directory + "\\src\\TestScreenshot.PNG";
+        System.out.println("Finding Image at " + imagePath);
+        BufferedImage testImage = null;
+        try {
+            testImage = ImageIO.read(new File(imagePath));
+        } catch (IOException e) {
+            System.out.println("Failed to load file.");
+        }
+        
+        writeFullFile(testImage);
     }
     
-    public void writeFullFile(BufferedImage imageToProcess) {
+    public static void writeFullFile(BufferedImage imageToProcess) {
         
         int lineCount = 1;
 
-        Main.alert("Choose location to save file");
 
-        String directory = "";
-        JFileChooser fc = new JFileChooser();
-        fc.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
-        int returnVal = fc.showOpenDialog(null);
-
-        if (returnVal == JFileChooser.APPROVE_OPTION)
-        {
-            File name = fc.getSelectedFile();
-            //Grab full path of directory
-            directory = name.getAbsolutePath();
-        }
-        else
-            Main.alert("Must be a directory");
+        String directory = System.getProperty("user.dir");
 
         //If a directory is chosen
         if(!directory.equals(""))
         {
-           String fullpath = directory + "/" + View.panel.getFrameName() + "AllColor.csv";
+           String fullpath = directory + "/test" + "AllColor.csv";
 
            try
            {
@@ -94,18 +95,18 @@ public class VectorGeneratorUnitTest {
            }
            catch(FileNotFoundException e)
            {
-              Main.alert("Error when creating file");
+              System.out.println("Error when creating file");
            }
 
-           Main.alert("Finished writing file");
+           System.out.println("Finished writing file");
         }
         else
         {
-           Main.alert("No directory chosen (file was not written)");
+           System.out.println("No directory chosen (file was not written)");
         }
      }
    
-    public double truncate(double value) {
+    public static double truncate(double value) {
         DecimalFormat df = new DecimalFormat("#.##");
         String trunc = df.format(value);
 
