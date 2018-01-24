@@ -7,20 +7,27 @@ import java.io.IOException;
 import java.io.File;
 
 class ImageProcessor {
-    private static final String IMAGE_DIRECTORY_PATH = "..\\images\\testerImages";
+    private static final String IMAGE_DIRECTORY_PATH = "\\images\\testerImages";
 
     public ImageProcessor() throws IOException {
         VFI_Map.Init();
     }
 
 	public void processEntireSelection() {
-		File directoryOfImages = new File(IMAGE_DIRECTORY_PATH);
+		String directory = System.getProperty("user.dir");
+		File parentDirectory = new File(directory).getParentFile();
+		System.out.println(parentDirectory);
+		
+		File directoryOfImages = new File(parentDirectory.getAbsolutePath() + IMAGE_DIRECTORY_PATH);
+		System.out.println(directoryOfImages.getAbsolutePath());
 		File[] listOfImages = directoryOfImages.listFiles();
 		
-		for (int i = 0; i < listOfImages.length(); i++) {
-			FIle = listOfImages.get(i);
-			System.out.println(File.getAbsolutePath());
+		for (int i = 0; i < listOfImages.length; i++) {
+			File imageFile = listOfImages[i];
+			System.out.println(imageFile.getAbsolutePath());
 		}
+
+
 	}
 	
 	private ArrayList<Map> processSingleImage(BufferedImage imageToProcess) {
