@@ -11,23 +11,33 @@ class ImageProcessor {
 
     public ImageProcessor() throws IOException {
         VFI_Map.Init();
+		ArrayList<ArrayList> listOfFramesOfVectors = processEntireSelection();
+		CsvWriter writer = new CsvWriter(listOfFramesOfVectors);
     }
 
-	public void processEntireSelection() {
+	public ArrayList<ArrayList> processEntireSelection() {
 		String directory = System.getProperty("user.dir");
 		File parentDirectory = new File(directory).getParentFile();
-		System.out.println(parentDirectory);
 		
 		File directoryOfImages = new File(parentDirectory.getAbsolutePath() + IMAGE_DIRECTORY_PATH);
-		System.out.println(directoryOfImages.getAbsolutePath());
 		File[] listOfImages = directoryOfImages.listFiles();
 		
+		ArrayList<ArrayList> listOfFramesOfVectors = new ArrayList<ArrayList>();
+
 		for (int i = 0; i < listOfImages.length; i++) {
 			File imageFile = listOfImages[i];
-			System.out.println(imageFile.getAbsolutePath());
+			BufferedImage loadedImage = null;
+
+			try {
+				loadedImage = ImageIO.read(imageFile);
+			} catch (IOException e) {
+			    System.out.println("Failed to load file.");
+			}
+
+			listOfFramesOfVectors.add(processSingleImage(loadedImage));
 		}
 
-
+		return listOfFramesOfVectors;
 	}
 	
 	private ArrayList<Map> processSingleImage(BufferedImage imageToProcess) {

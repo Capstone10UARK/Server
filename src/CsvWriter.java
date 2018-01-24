@@ -1,28 +1,37 @@
+import java.io.File;
+import java.util.*;
+import java.io.PrintWriter;
+import java.io.IOException;
+
 class CsvWriter {
     
-    public CsvWriter() {
-        
+    public CsvWriter(ArrayList<ArrayList> listOfFramesOfVectors) {
+        try {
+		writeFile(listOfFramesOfVectors);
+		} catch (IOException e) {
+			System.out.println("Writing to file failed");
+		}
     }
 
-	private void writeFile(ArrayList listOfFramesOfVectors) {
+	private void writeFile(ArrayList<ArrayList> listOfFramesOfVectors) throws IOException {
 		String directory = System.getProperty("user.dir");
 		String fullpath = directory + "/test" + "AllColor.csv";
 
 		File file = new File(fullpath);
+		file.getParentFile().mkdirs();
 		PrintWriter printWriter = new PrintWriter(file);
 
 		String headers = makeHeaders();
-		printWriter.write(headers);
+		printWriter.println(headers);
 
 		for (int i = 0; i < listOfFramesOfVectors.size(); i++) {
-			ArrayList listOfVectors = listOfFramesOfVectors(i);
+			ArrayList<Map> listOfVectors = listOfFramesOfVectors.get(i);
 			for (int j = 0; j < listOfVectors.size(); j++) {
-				Map<String, Double> vector = listOfVectors(j);
-
+				Map<String, Double> vector = listOfVectors.get(j);
+				printWriter.println(i + "," + j + "," + vector.get("x") + "," + vector.get("y") + "," + vector.get("Vx") + "," + vector.get("Vy") + "," + vector.get("speed"));
 			}
 		}
-
-
+		printWriter.close();
 	}
 
 	private String makeHeaders() {
