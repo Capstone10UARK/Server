@@ -4,8 +4,9 @@ import java.io.BufferedReader;
 import java.io.PrintWriter;
 import java.io.InputStreamReader;
 import java.io.IOException;
+import java.lang.AutoCloseable;
 
-class CommandServer{
+class CommandServer implements AutoCloseable{
     private ServerSocket serverSocket;
     private Socket clientSocket;
     private PrintWriter out;
@@ -16,6 +17,13 @@ class CommandServer{
         this.clientSocket = serverSocket.accept();
         this.out = new PrintWriter(clientSocket.getOutputStream(), true);
         this.in = new BufferedReader(new InputStreamReader(clientSocket.getInputStream())); 
+    }
+    
+    public void close() throws IOException{
+        serverSocket.close();
+        clientSocket.close();
+        out.close();
+        in.close();
     }
    
     public void run(){
@@ -46,6 +54,7 @@ class CommandServer{
         try{
             cmdServer = new CommandServer(4444);
             cmdServer.run();
+            cmdServer.close();
         }
         catch(IOException e){
             System.err.println("ERROR CREATING COMMAND SERVER");
