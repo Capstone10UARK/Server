@@ -50,9 +50,9 @@ class CommandServer implements AutoCloseable{
     }
     
      public static void main(String[] args){
-        CommandServer cmdServer;
-        try{
-            cmdServer = new CommandServer(4444);
+        
+        try(CommandServer cmdServer = new CommandServer(4444);)
+        {
             cmdServer.run();
             cmdServer.close();
         }
