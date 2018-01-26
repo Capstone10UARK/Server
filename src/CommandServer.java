@@ -6,6 +6,8 @@ import java.io.InputStreamReader;
 import java.io.IOException;
 import java.lang.AutoCloseable;
 import org.json.JSONObject;
+import org.json.JSONException;
+
 
 class CommandServer implements AutoCloseable{
     private ServerSocket serverSocket;
@@ -33,12 +35,16 @@ class CommandServer implements AutoCloseable{
             while(true){
                 String input = in.readLine();
                 if(input != null){
-                    if(input.equals("Go")){
+                    JSONObject obj = new JSONObject(input);
+                    if(obj.getString("Cmd").equals("Go")){
                         //Do stuff
                         System.out.println("Process Images");
-                        out.println("Done");
+                        JSONObject response = new JSONObject();
+                        response.put("Status", "Done");
+                        System.out.println(response.toString());
+                        out.println(response.toString());
                     }
-                    else if(input.equals("End"))
+                    else if(obj.getString("Cmd").equals("End"))
                         break;
                     else
                         System.out.println(input+ " Was an unknown message");
@@ -47,6 +53,10 @@ class CommandServer implements AutoCloseable{
         }
         catch(IOException e){
             System.err.println("ERROR READING COMMAND FROM PORT");
+            System.err.println(e.getMessage());
+        }
+        catch(Exception e){
+            System.err.println("ERROR WHEN CREATING JSONOBJECT");
             System.err.println(e.getMessage());
         }
     }

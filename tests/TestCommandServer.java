@@ -3,6 +3,8 @@ import java.io.BufferedReader;
 import java.io.PrintWriter;
 import java.io.InputStreamReader;
 import java.io.IOException;
+import org.json.JSONObject;
+import org.json.JSONException;
 
 class TestCommandServer{
     
@@ -12,20 +14,35 @@ class TestCommandServer{
             PrintWriter out = new PrintWriter(socket.getOutputStream(), true);
             BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
         ){
-            out.println("Go");
-            System.out.println(in.readLine());
-            out.println("Go");
-            System.out.println(in.readLine());
-            out.println("Go");
-            System.out.println(in.readLine());
-            out.println("Go");
-            System.out.println(in.readLine());
-            out.println("End");
-            System.out.println(in.readLine());
+            JSONObject obj = new JSONObject();
+            obj.put("Cmd", "Go");
+            out.println(obj.toString());
+            JSONObject response = new JSONObject(in.readLine());
+            System.out.println(response.toString());
+            
+            out.println(obj.toString());
+            response = new JSONObject(in.readLine());
+            System.out.println(response.toString());
+            
+            out.println(obj.toString());
+            response = new JSONObject(in.readLine());
+            System.out.println(response.toString());
+            
+            out.println(obj.toString());
+            response = new JSONObject(in.readLine());
+            System.out.println(response.toString());
+            
+            obj = new JSONObject();
+            obj.put("Cmd","End");
+            out.println(obj.toString());
         }
-        catch(IOException error){
+        catch(IOException e){
             System.out.println("Exception caught when trying to write to port 4444");
-            System.err.println(error.getMessage());
+            System.err.println(e.getMessage());
+        }
+        catch(Exception e){
+            System.out.println("Exception caught when trying to create JSONObject");
+            System.err.println(e.getMessage());
         }
     }
 }
