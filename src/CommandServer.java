@@ -30,24 +30,37 @@ class CommandServer implements AutoCloseable{
     }
    
     public void run(){
-        
         try{  
-            while(true){
+            boolean run = true;
+            while(run){
                 String input = in.readLine();
+                
                 if(input != null){
                     JSONObject obj = new JSONObject(input);
-                    if(obj.getString("Cmd").equals("Go")){
-                        //Do stuff
-                        System.out.println("Process Images");
-                        JSONObject response = new JSONObject();
-                        response.put("Status", "Done");
-                        System.out.println(response.toString());
-                        out.println(response.toString());
+                    
+                    if(obj.has("Cmd")){
+                        switch(obj.getString("Cmd")){
+                            case "Go":
+                                //Do stuff
+                                System.out.println("Process Images");
+                                //No need to create response here
+                                //Client can send a ProgressReport Cmd if they are curious
+                                break;
+                                
+                            case "ProgressReport":
+                                //get progress from ImageProcessor and create response
+                                JSONObject response = new JSONObject();
+                                
+                                response.put("Status", "Running");
+                                response.put("Progress", 25);
+                                out.println(response.toString());
+                                break;
+                                
+                            case "End":
+                                run = false;
+                                break;
+                        }
                     }
-                    else if(obj.getString("Cmd").equals("End"))
-                        break;
-                    else
-                        System.out.println(input+ " Was an unknown message");
                 }
             }
         }
@@ -55,7 +68,7 @@ class CommandServer implements AutoCloseable{
             System.err.println("ERROR READING COMMAND FROM PORT");
             System.err.println(e.getMessage());
         }
-        catch(Exception e){
+        catch(JSONException e){
             System.err.println("ERROR WHEN CREATING JSONOBJECT");
             System.err.println(e.getMessage());
         }
@@ -71,9 +84,6 @@ class CommandServer implements AutoCloseable{
         catch(IOException e){
             System.err.println("ERROR CREATING COMMAND SERVER");
             System.err.println(e.getMessage());
-        }
-        
-        
+        }   
     }
-    
 }

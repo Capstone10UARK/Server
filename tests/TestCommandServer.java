@@ -14,24 +14,19 @@ class TestCommandServer{
             PrintWriter out = new PrintWriter(socket.getOutputStream(), true);
             BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
         ){
+            //test Go command
             JSONObject obj = new JSONObject();
             obj.put("Cmd", "Go");
             out.println(obj.toString());
+            
+            //test ProgressReport command
+            obj = new JSONObject();
+            obj.put("Cmd", "ProgressReport");
+            out.println(obj.toString());
             JSONObject response = new JSONObject(in.readLine());
-            System.out.println(response.toString());
+            System.out.println("Status: " + response.getString("Status") + "\nProgress: " + response.getInt("Progress"));
             
-            out.println(obj.toString());
-            response = new JSONObject(in.readLine());
-            System.out.println(response.toString());
-            
-            out.println(obj.toString());
-            response = new JSONObject(in.readLine());
-            System.out.println(response.toString());
-            
-            out.println(obj.toString());
-            response = new JSONObject(in.readLine());
-            System.out.println(response.toString());
-            
+            //test End command
             obj = new JSONObject();
             obj.put("Cmd","End");
             out.println(obj.toString());
@@ -40,7 +35,7 @@ class TestCommandServer{
             System.out.println("Exception caught when trying to write to port 4444");
             System.err.println(e.getMessage());
         }
-        catch(Exception e){
+        catch(JSONException e){
             System.out.println("Exception caught when trying to create JSONObject");
             System.err.println(e.getMessage());
         }
