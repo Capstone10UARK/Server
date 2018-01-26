@@ -5,6 +5,7 @@ import java.io.PrintWriter;
 import java.io.InputStreamReader;
 import java.io.IOException;
 import java.lang.AutoCloseable;
+import org.json.JSONObject;
 
 class CommandServer implements AutoCloseable{
     private ServerSocket serverSocket;
@@ -27,6 +28,7 @@ class CommandServer implements AutoCloseable{
     }
    
     public void run(){
+        
         try{  
             while(true){
                 String input = in.readLine();

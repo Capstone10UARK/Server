@@ -4,7 +4,7 @@ import java.io.PrintWriter;
 import java.io.InputStreamReader;
 import java.io.IOException;
 
-class TestSocketServer{
+class TestCommandServer{
     
     public static void main(String[] args) throws IOException{
         try(
@@ -19,6 +19,8 @@ class TestSocketServer{
             out.println("Go");
             System.out.println(in.readLine());
             out.println("Go");
+            System.out.println(in.readLine());
+            out.println("End");
             System.out.println(in.readLine());
         }
         catch(IOException error){
