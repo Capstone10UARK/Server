@@ -2,7 +2,8 @@ This file contains details on how to send messages to the command server in src/
 
 The command server accepts three types of commands and gives three types of responses as of this version all using JSON.
 
-Commands:
+Commands-
+
     go
         parameters  - "filePath"    : <string with the path to the location user wants the final CSV>
         explanation - sending the command go and its required file path will start the imageProcessor running on all files in the designated folder and create a .csv with all of the vector data from said files.
@@ -23,7 +24,8 @@ Commands:
         returns     - commandExecuted response if run successfully
                     - error response if run unsuccesfully
     
-Responses:
+Responses-
+
     commandExecuted
         parameters  - none
         explanation - receiving this response means that the previous command was executed successfully
