@@ -38,28 +38,38 @@ class CommandServer implements AutoCloseable{
                 if(input != null){
                     JSONObject obj = new JSONObject(input);
                     
-                    if(obj.has("Cmd")){
-                        switch(obj.getString("Cmd")){
-                            case "Go":
-                                //Do stuff
-                                System.out.println("Process Images");
-                                //No need to create response here
-                                //Client can send a ProgressReport Cmd if they are curious
+                    if(obj.has("command")){
+                        JSONObject response = new JSONObject();
+                        switch(obj.getString("command")){
+                            case "go":
+                                if(obj.has("filePath")){
+                                    String filePath = obj.getString("filePath");
+                                    //Do stuff
+                                
+                                    System.out.println("Process Images");
+                                    System.out.println("Create CSV at " + filePath);
+                                
+                                    response.put("response","commandExecuted");
+                                }
+                                else{
+                                    response.put("response", "error");
+                                    response.put("message", "No file path provided with go command. See API.");
+                                }
                                 break;
                                 
-                            case "ProgressReport":
+                            case "progressReport":
                                 //get progress from ImageProcessor and create response
-                                JSONObject response = new JSONObject();
-                                
-                                response.put("Status", "Running");
-                                response.put("Progress", 25);
-                                out.println(response.toString());
+                                response.put("response", "progressReport");                            
+                                response.put("status", "running");
+                                response.put("progress", 25);
                                 break;
                                 
-                            case "End":
+                            case "end":
                                 run = false;
+                                response.put("reponse", "commandExecuted");
                                 break;
                         }
+                        out.println(response.toString());
                     }
                 }
             }

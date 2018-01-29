@@ -16,20 +16,27 @@ class TestCommandServer{
         ){
             //test Go command
             JSONObject obj = new JSONObject();
-            obj.put("Cmd", "Go");
+            obj.put("command", "go");
             out.println(obj.toString());
+            System.out.println(in.readLine());
             
+            obj = new JSONObject();
+            obj.put("command", "go");
+            obj.put("filePath", "/this/is/a/dummy/path.csv");
+            out.println(obj.toString());
+            System.out.println(in.readLine());
             //test ProgressReport command
             obj = new JSONObject();
-            obj.put("Cmd", "ProgressReport");
+            obj.put("command", "progressReport");
             out.println(obj.toString());
             JSONObject response = new JSONObject(in.readLine());
-            System.out.println("Status: " + response.getString("Status") + "\nProgress: " + response.getInt("Progress"));
+            System.out.println("Status: " + response.getString("status") + "\nProgress: " + response.getInt("progress"));
             
             //test End command
             obj = new JSONObject();
-            obj.put("Cmd","End");
+            obj.put("command","end");
             out.println(obj.toString());
+            System.out.println(in.readLine());
         }
         catch(IOException e){
             System.out.println("Exception caught when trying to write to port 4444");
