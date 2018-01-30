@@ -7,15 +7,16 @@ import java.io.IOException;
 import java.io.File;
 
 class ImageProcessor {
+    //when executing on linux this path must use / instead of \ otherwise this causes a NullPointerException
     private static final String IMAGE_DIRECTORY_PATH = "\\images\\testerImages";
 
-    public ImageProcessor() throws IOException {
+    public ImageProcessor(String outputPath) throws IOException {
         VFI_Map.Init();
 		ArrayList<ArrayList> listOfFramesOfVectors = processEntireSelection();
-		CsvWriter writer = new CsvWriter(listOfFramesOfVectors);
+		CsvWriter writer = new CsvWriter(listOfFramesOfVectors, outputPath);
     }
 
-	public ArrayList<ArrayList> processEntireSelection() {
+	public ArrayList<ArrayList> processEntireSelection() throws IOException{
 		String directory = System.getProperty("user.dir");
 		File parentDirectory = new File(directory).getParentFile();
 		

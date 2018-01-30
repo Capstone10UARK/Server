@@ -45,7 +45,7 @@ class CommandServer implements AutoCloseable{
                                 if(obj.has("filePath")){
                                     String filePath = obj.getString("filePath");
                                     //Do stuff
-                                
+                                    new ImageProcessor(filePath);
                                     System.out.println("Process Images");
                                     System.out.println("Create CSV at " + filePath);
                                 

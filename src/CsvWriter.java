@@ -5,17 +5,19 @@ import java.io.IOException;
 
 class CsvWriter {
     
-    public CsvWriter(ArrayList<ArrayList> listOfFramesOfVectors) {
+    public CsvWriter(ArrayList<ArrayList> listOfFramesOfVectors, String outputPath) {
         try {
-		writeFile(listOfFramesOfVectors);
+		writeFile(listOfFramesOfVectors, outputPath);
 		} catch (IOException e) {
 			System.out.println("Writing to file failed");
 		}
     }
 
-	private void writeFile(ArrayList<ArrayList> listOfFramesOfVectors) throws IOException {
+	private void writeFile(ArrayList<ArrayList> listOfFramesOfVectors, String outputPath) throws IOException {
 		String directory = System.getProperty("user.dir");
-		String fullpath = directory + "/test" + "AllColor.csv";
+		//String fullpath = directory + "/test" + "AllColor.csv";
+		//path provided by gui should be an absolute path on the users machine
+		String fullpath = outputPath;
 
 		File file = new File(fullpath);
 		file.getParentFile().mkdirs();

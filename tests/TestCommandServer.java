@@ -14,6 +14,9 @@ class TestCommandServer{
             PrintWriter out = new PrintWriter(socket.getOutputStream(), true);
             BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
         ){
+            //in order to test on your machine this path must be changed because duh
+            String filePath = "/home/s1m0n/CapstoneProject/Server/tests/output.csv";
+            
             //test Go command
             JSONObject obj = new JSONObject();
             obj.put("command", "go");
@@ -22,7 +25,7 @@ class TestCommandServer{
             
             obj = new JSONObject();
             obj.put("command", "go");
-            obj.put("filePath", "/this/is/a/dummy/path.csv");
+            obj.put("filePath", filePath);
             out.println(obj.toString());
             System.out.println(in.readLine());
             //test ProgressReport command
@@ -30,6 +33,7 @@ class TestCommandServer{
             obj.put("command", "progressReport");
             out.println(obj.toString());
             JSONObject response = new JSONObject(in.readLine());
+            System.out.println(response.toString());
             System.out.println("Status: " + response.getString("status") + "\nProgress: " + response.getInt("progress"));
             
             //test End command
