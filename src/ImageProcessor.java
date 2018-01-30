@@ -8,7 +8,7 @@ import java.io.File;
 
 class ImageProcessor {
     //when executing on linux this path must use / instead of \ otherwise this causes a NullPointerException
-    private static final String IMAGE_DIRECTORY_PATH = "\\images\\testerImages";
+    private static final String IMAGE_DIRECTORY_PATH = "/images/testerImages";
 
     public ImageProcessor(String outputPath) throws IOException {
         VFI_Map.Init();
