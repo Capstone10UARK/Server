@@ -5,18 +5,24 @@ import java.awt.Color;
 import java.text.DecimalFormat;
 import java.io.IOException;
 import java.io.File;
+import java.lang.*;
 
-class ImageProcessor {
+class ImageProcessor extends Thread{
     //when executing on linux this path must use / instead of \ otherwise this causes a NullPointerException
     private static final String IMAGE_DIRECTORY_PATH = "/images/testerImages";
+    private String outputPath;
 
-    public ImageProcessor(String outputPath) throws IOException {
+    public ImageProcessor(String outputPathPassed) throws IOException {
         VFI_Map.Init();
-		ArrayList<ArrayList> listOfFramesOfVectors = processEntireSelection();
-		CsvWriter writer = new CsvWriter(listOfFramesOfVectors, outputPath);
+		outputPath = outputPathPassed;
     }
 
-	public ArrayList<ArrayList> processEntireSelection() throws IOException{
+    public void run(float percentComplete) {
+    	ArrayList<ArrayList> listOfFramesOfVectors = processEntireSelection(percentComplete);
+    	CsvWriter writer = new CsvWriter(listOfFramesOfVectors, outputPath);
+    }
+
+	private ArrayList<ArrayList> processEntireSelection(float percentComplete) throws IOException{
 		String directory = System.getProperty("user.dir");
 		File parentDirectory = new File(directory).getParentFile();
 		
@@ -36,6 +42,7 @@ class ImageProcessor {
 			}
 
 			listOfFramesOfVectors.add(processSingleImage(loadedImage));
+			percentComplete = i / listOfImages.length;
 		}
 
 		return listOfFramesOfVectors;
