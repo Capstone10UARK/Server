@@ -32,22 +32,22 @@ class CommandServer implements AutoCloseable{
     public void run(){
         try{  
             boolean run = true;
+            ImageProcessor processor;
+            float progress = 0.0f;
             while(run){
                 String input = in.readLine();
                 
                 if(input != null){
                     JSONObject obj = new JSONObject(input);
-                    
                     if(obj.has("command")){
                         JSONObject response = new JSONObject();
-                        float progress;
                         switch(obj.getString("command")){
                             case "go":
                                 if(obj.has("filePath")){
                                     String filePath = obj.getString("filePath");
                                     //Do stuff
-                                    ImageProcessor processor = new ImageProcessor(filePath);
-                                    processor.start(progress)
+                                    processor = new ImageProcessor(filePath, progress);
+                                    processor.start();
                                     System.out.println("Process Images");
                                     System.out.println("Create CSV at " + filePath);
                                 

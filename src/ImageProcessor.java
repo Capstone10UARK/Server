@@ -11,14 +11,21 @@ class ImageProcessor extends Thread{
     //when executing on linux this path must use / instead of \ otherwise this causes a NullPointerException
     private static final String IMAGE_DIRECTORY_PATH = "/images/testerImages";
     private String outputPath;
+    private float progress;
 
-    public ImageProcessor(String outputPathPassed) throws IOException {
+    public ImageProcessor(String outputPathPassed, float progressPassed) throws IOException {
         VFI_Map.Init();
-		outputPath = outputPathPassed;
+	outputPath = outputPathPassed;
+        progress = progressPassed;
     }
 
-    public void run(float percentComplete) {
-    	ArrayList<ArrayList> listOfFramesOfVectors = processEntireSelection(percentComplete);
+    public void run(){
+        ArrayList<ArrayList> listOfFramesOfVectors = null;
+        try {
+    	    listOfFramesOfVectors = processEntireSelection(progress);
+        } catch (IOException e) {
+            System.out.println("couldn't start processing");
+        }
     	CsvWriter writer = new CsvWriter(listOfFramesOfVectors, outputPath);
     }
 
