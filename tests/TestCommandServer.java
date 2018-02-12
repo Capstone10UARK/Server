@@ -28,6 +28,12 @@ class TestCommandServer{
             obj.put("filePath", filePath);
             out.println(obj.toString());
             System.out.println(in.readLine());
+
+            try{
+                Thread.sleep(30000);
+            } catch (InterruptedException e) {
+                System.out.println("sleep interrupted");
+            }
             //test ProgressReport command
             obj = new JSONObject();
             obj.put("command", "progressReport");

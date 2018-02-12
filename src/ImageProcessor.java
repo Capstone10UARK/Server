@@ -7,29 +7,31 @@ import java.io.IOException;
 import java.io.File;
 import java.lang.*;
 
-class ImageProcessor extends Thread{
+class ImageProcessor extends Thread {
     //when executing on linux this path must use / instead of \ otherwise this causes a NullPointerException
+    public ProgressWrapper progress;
+    
     private static final String IMAGE_DIRECTORY_PATH = "/images/testerImages";
     private String outputPath;
-    private float progress;
 
-    public ImageProcessor(String outputPathPassed, float progressPassed) throws IOException {
+    public ImageProcessor(String outputPathPassed, ProgressWrapper progressPassed) throws IOException {
         VFI_Map.Init();
-	outputPath = outputPathPassed;
+		outputPath = outputPathPassed;
         progress = progressPassed;
     }
 
     public void run(){
         ArrayList<ArrayList> listOfFramesOfVectors = null;
         try {
-    	    listOfFramesOfVectors = processEntireSelection(progress);
+    	    listOfFramesOfVectors = processEntireSelection();
         } catch (IOException e) {
             System.out.println("couldn't start processing");
         }
     	CsvWriter writer = new CsvWriter(listOfFramesOfVectors, outputPath);
     }
 
-	private ArrayList<ArrayList> processEntireSelection(float percentComplete) throws IOException{
+	private ArrayList<ArrayList> processEntireSelection() throws IOException{
+		long startTime = System.currentTimeMillis();
 		String directory = System.getProperty("user.dir");
 		File parentDirectory = new File(directory).getParentFile();
 		
@@ -49,10 +51,18 @@ class ImageProcessor extends Thread{
 			}
 
 			listOfFramesOfVectors.add(processSingleImage(loadedImage));
-			percentComplete = i / listOfImages.length;
+			progress.setProgress((float)(i+1) / listOfImages.length);
 		}
-
+		printProcessingTime(startTime);
 		return listOfFramesOfVectors;
+	}
+
+	private void printProcessingTime(long startTime) {
+		long processingTimeMs = System.currentTimeMillis() - startTime;
+		long processingTimeS = processingTimeMs / 1000;
+		long processingTimeMin = processingTimeS / 60;
+		processingTimeS = processingTimeS % 60;
+		System.out.println("Processing took " + processingTimeMin + " minutes and " + processingTimeS + " seconds.");
 	}
 	
 	private ArrayList<Map> processSingleImage(BufferedImage imageToProcess) {

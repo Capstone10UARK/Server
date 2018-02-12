@@ -33,7 +33,7 @@ class CommandServer implements AutoCloseable{
         try{  
             boolean run = true;
             ImageProcessor processor;
-            float progress = 0.0f;
+            ProgressWrapper progress = null;
             while(run){
                 String input = in.readLine();
                 
@@ -46,6 +46,7 @@ class CommandServer implements AutoCloseable{
                                 if(obj.has("filePath")){
                                     String filePath = obj.getString("filePath");
                                     //Do stuff
+                                    progress = new ProgressWrapper();
                                     processor = new ImageProcessor(filePath, progress);
                                     processor.start();
                                     System.out.println("Process Images");
@@ -61,9 +62,15 @@ class CommandServer implements AutoCloseable{
                                 
                             case "progressReport":
                                 //get progress from ImageProcessor and create response
+                                float completed = 0;
+                                if (progress != null) {
+                                    completed = progress.getProgress();
+                                    System.out.println("checked progress");
+                                }
+                                
                                 response.put("response", "progressReport");                            
                                 response.put("status", "running");
-                                response.put("progress", 25);
+                                response.put("progress", completed);
                                 break;
                                 
                             case "end":
