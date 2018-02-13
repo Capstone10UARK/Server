@@ -28,19 +28,24 @@ class TestCommandServer{
             obj.put("filePath", filePath);
             out.println(obj.toString());
             System.out.println(in.readLine());
-
-            try{
-                Thread.sleep(30000);
-            } catch (InterruptedException e) {
-                System.out.println("sleep interrupted");
-            }
-            //test ProgressReport command
-            obj = new JSONObject();
-            obj.put("command", "progressReport");
-            out.println(obj.toString());
-            JSONObject response = new JSONObject(in.readLine());
-            System.out.println(response.toString());
-            System.out.println("Status: " + response.getString("status") + "\nProgress: " + response.getInt("progress"));
+            
+            boolean done = false;
+            do{
+                try{
+                    Thread.sleep(30000);
+                } catch (InterruptedException e) {
+                    System.out.println("sleep interrupted");
+                }
+                //test ProgressReport command
+                obj = new JSONObject();
+                obj.put("command", "progressReport");
+                out.println(obj.toString());
+                JSONObject response = new JSONObject(in.readLine());
+                System.out.println(response.toString());
+                System.out.println("Status: " + response.getString("status") + "\nProgress: " + response.getDouble("progress"));
+                
+                done = response.getDouble("progress") == 1.0;
+            }while(!done);
             
             //test End command
             obj = new JSONObject();
