@@ -21,40 +21,42 @@ class ImageProcessor extends Thread {
     }
 
     public void run(){
-        ArrayList<ArrayList> listOfFramesOfVectors = null;
         try {
-    	    listOfFramesOfVectors = processEntireSelection();
+        	CsvWriter writer = new CsvWriter(outputPath);
+    	    processEntireSelection(writer);
         } catch (IOException e) {
             System.out.println("couldn't start processing");
         }
-    	CsvWriter writer = new CsvWriter(listOfFramesOfVectors, outputPath);
     }
 
-	private ArrayList<ArrayList> processEntireSelection() throws IOException{
+	private void processEntireSelection(CsvWriter writer) throws IOException{
 		long startTime = System.currentTimeMillis();
+
+		File[] listOfImages = getListOfImages();
+
+		for (int frameIndex = 0; frameIndex < listOfImages.length; frameIndex++) {
+			File imageFile = listOfImages[frameIndex];
+			BufferedImage loadedImage = null;
+
+			try {
+				loadedImage = ImageIO.read(imageFile);
+				writer.writeOneFile(processSingleImage(loadedImage), frameIndex);
+			} catch (IOException e) {
+			    System.out.println("Failed to load file index " + Integer.toString(frameIndex);
+			}
+			progress.setProgress((float)(frameIndex+1) / listOfImages.length);
+		}
+
+		printProcessingTime(startTime);
+	}
+
+	private File[] getListOfImages() {
 		String directory = System.getProperty("user.dir");
 		File parentDirectory = new File(directory).getParentFile();
 		
 		File directoryOfImages = new File(parentDirectory.getAbsolutePath() + IMAGE_DIRECTORY_PATH);
 		File[] listOfImages = directoryOfImages.listFiles();
-		
-		ArrayList<ArrayList> listOfFramesOfVectors = new ArrayList<ArrayList>();
-
-		for (int i = 0; i < listOfImages.length; i++) {
-			File imageFile = listOfImages[i];
-			BufferedImage loadedImage = null;
-
-			try {
-				loadedImage = ImageIO.read(imageFile);
-			} catch (IOException e) {
-			    System.out.println("Failed to load file.");
-			}
-
-			listOfFramesOfVectors.add(processSingleImage(loadedImage));
-			progress.setProgress((float)(i+1) / listOfImages.length);
-		}
-		printProcessingTime(startTime);
-		return listOfFramesOfVectors;
+		return listOfImages;
 	}
 
 	private void printProcessingTime(long startTime) {

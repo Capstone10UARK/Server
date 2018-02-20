@@ -50,7 +50,7 @@ class CommandServer implements AutoCloseable{
                                     processor = new ImageProcessor(filePath, progress);
                                     processor.start();
                                     System.out.println("Process Images");
-                                    System.out.println("Create CSV at " + filePath);
+                                    System.out.println("Create CSVs at " + filePath);
                                 
                                     response.put("response","commandExecuted");
                                 }

@@ -2,38 +2,50 @@ import java.io.File;
 import java.util.*;
 import java.io.PrintWriter;
 import java.io.IOException;
+import java.io.FileNotFoundException;
 
 class CsvWriter {
     
-    public CsvWriter(ArrayList<ArrayList> listOfFramesOfVectors, String outputPath) {
-        try {
-		writeFile(listOfFramesOfVectors, outputPath);
-		} catch (IOException e) {
-			System.out.println("Writing to file failed");
-		}
+	private String outString;
+
+    public CsvWriter(String outputPath) {
+    	outString = outputPath;
+    	File outputBaseDirectory = createNewDirectoryIfNotExist(outString);
     }
 
-	private void writeFile(ArrayList<ArrayList> listOfFramesOfVectors, String outputPath) throws IOException {
-		String directory = System.getProperty("user.dir");
-		//String fullpath = directory + "/test" + "AllColor.csv";
-		//path provided by gui should be an absolute path on the users machine
-		String fullpath = outputPath;
+	public void writeOneFile(ArrayList<Map> listOfVectors, int frameNumber) {
+		// create new directory for each second in the video
+		int secondIndex = frameNumber / 24;
+		String secondsFileString = outString + Integer.toString(secondIndex) + "/";
+		File secondsFileDirectory = createNewDirectoryIfNotExist(secondsFileString);
 
-		File file = new File(fullpath);
-		file.getParentFile().mkdirs();
-		PrintWriter printWriter = new PrintWriter(file);
+		// create a new csc file for each frame
+		File outputFile = new File(secondsFileString + Integer.toString(frameNumber) + ".csv");
 
-		String headers = makeHeaders();
-		printWriter.println(headers);
+		try {
+			PrintWriter printWriter = new PrintWriter(outputFile);
+			
+			String headers = makeHeaders();
+			printWriter.println(headers);
 
-		for (int i = 0; i < listOfFramesOfVectors.size(); i++) {
-			ArrayList<Map> listOfVectors = listOfFramesOfVectors.get(i);
-			for (int j = 0; j < listOfVectors.size(); j++) {
-				Map<String, Double> vector = listOfVectors.get(j);
-				printWriter.println(i + "," + j + "," + vector.get("x") + "," + vector.get("y") + "," + vector.get("Vx") + "," + vector.get("Vy") + "," + vector.get("speed"));
+			for (int vectorIndex = 0; vectorIndex < listOfVectors.size(); vectorIndex++) {
+				Map<String, Double> vector = listOfVectors.get(vectorIndex);
+				printWriter.println(frameNumber + "," + vectorIndex + "," + vector.get("x") + "," + 
+					vector.get("y") + "," + vector.get("Vx") + "," + vector.get("Vy") + "," + vector.get("speed"));
 			}
+
+			printWriter.close();
+		} catch (FileNotFoundException e) {
+			System.out.println("Output CSV file not found.");
 		}
-		printWriter.close();
+	}
+
+	private File createNewDirectoryIfNotExist(String directoryString) {
+		File directoryFile = new File(directoryString);
+		if (!directoryFile.exists()) {
+			directoryFile.mkdir();
+		}
+		return directoryFile;
 	}
 
 	private String makeHeaders() {

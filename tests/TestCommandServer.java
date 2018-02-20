@@ -15,7 +15,7 @@ class TestCommandServer{
             BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
         ){
             //in order to test on your machine this path must be changed because duh
-            String filePath = "/home/greg/code/Server/tests/output.csv";
+            String filePath = "/home/greg/code/Server/tests/output/";
             
             //test Go command
             JSONObject obj = new JSONObject();
