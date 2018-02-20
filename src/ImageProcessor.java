@@ -42,7 +42,7 @@ class ImageProcessor extends Thread {
 				loadedImage = ImageIO.read(imageFile);
 				writer.writeOneFile(processSingleImage(loadedImage), frameIndex);
 			} catch (IOException e) {
-			    System.out.println("Failed to load file index " + Integer.toString(frameIndex);
+			    System.out.println("Failed to load file index " + Integer.toString(frameIndex));
 			}
 			progress.setProgress((float)(frameIndex+1) / listOfImages.length);
 		}
@@ -83,12 +83,14 @@ class ImageProcessor extends Thread {
 				//If the color is not gray scale (aka "is color")
 				if((hsv[1] > 0.2)&&(hsv[2] > 0.2))
 				{
+					// get the rgb value closes to one represented in the RGB to vector data maps
+					int closestColor = VFI_Map.searchMap(color);
 					HashMap vector = new HashMap();
 					vector.put("x", x);
 					vector.put("y", y);
-					vector.put("Vx", truncate(VFI_Map.getVx(color)));
-					vector.put("Vy", truncate(VFI_Map.getVy(color)));
-					vector.put("speed", truncate(VFI_Map.getVelocity(color)));
+					vector.put("Vx", truncate(VFI_Map.getVx(closestColor)));
+					vector.put("Vy", truncate(VFI_Map.getVy(closestColor)));
+					vector.put("speed", truncate(VFI_Map.getVelocity(closestColor)));
 					listOfVectors.add(vector);
 				}
 			}
