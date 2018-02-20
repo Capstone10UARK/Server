@@ -42,7 +42,7 @@ class ImageProcessor extends Thread {
 				loadedImage = ImageIO.read(imageFile);
 				writer.writeOneFile(processSingleImage(loadedImage), frameIndex);
 			} catch (IOException e) {
-			    System.out.println("Failed to load file index " + Integer.toString(frameIndex);
+			    System.out.println("Failed to load file index " + Integer.toString(frameIndex));
 			}
 			progress.setProgress((float)(frameIndex+1) / listOfImages.length);
 		}
