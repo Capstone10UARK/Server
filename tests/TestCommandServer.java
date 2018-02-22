@@ -18,10 +18,10 @@ class TestCommandServer{
             String filePath = "/home/greg/code/Server/tests/output/";
             
             //test Go command
-            /*JSONObject obj = new JSONObject();
-            obj.put("command", "go");
-            out.println(obj.toString());
-            System.out.println(in.readLine());*/
+            JSONObject obj = new JSONObject();
+            // obj.put("command", "go");
+            // out.println(obj.toString());
+            // System.out.println(in.readLine());
             
             obj = new JSONObject();
             obj.put("command", "go");
