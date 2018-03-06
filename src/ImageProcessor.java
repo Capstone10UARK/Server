@@ -8,14 +8,14 @@ import java.io.File;
 import java.lang.*;
 
 class ImageProcessor extends Thread {
-    //when executing on linux this path must use / instead of \ otherwise this causes a NullPointerException
-    public ProgressWrapper progress;
-    
-    private static final String IMAGE_DIRECTORY_PATH = "/images/testerImages";
+    private final String IMAGE_DIRECTORY_PATH = "/images/testerImages";
+
     private String outputPath;
+    private ProgressWrapper progress;
+    private VFI_Map vfi;
 
     public ImageProcessor(String outputPathPassed, ProgressWrapper progressPassed) throws IOException {
-        VFI_Map.Init();
+    	vfi = new VFI_Map();
 		outputPath = outputPathPassed;
         progress = progressPassed;
     }
@@ -83,17 +83,18 @@ class ImageProcessor extends Thread {
 				//If the color is not gray scale (aka "is color")
 				if((hsv[1] > 0.2)&&(hsv[2] > 0.2))
 				{
+					// get the rgb value closes to one represented in the RGB to vector data maps
+					int closestColor = vfi.searchMap(color);
 					HashMap vector = new HashMap();
 					vector.put("x", x);
 					vector.put("y", y);
-					vector.put("Vx", truncate(VFI_Map.getVx(color)));
-					vector.put("Vy", truncate(VFI_Map.getVy(color)));
-					vector.put("speed", truncate(VFI_Map.getVelocity(color)));
+					vector.put("Vx", truncate(vfi.getVx(closestColor)));
+					vector.put("Vy", truncate(vfi.getVy(closestColor)));
+					vector.put("speed", truncate(vfi.getVelocity(closestColor)));
 					listOfVectors.add(vector);
 				}
 			}
 		}
-		System.out.println("Finished processing single image");
 		
 		return listOfVectors;
 	}
