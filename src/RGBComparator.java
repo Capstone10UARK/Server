@@ -2,6 +2,9 @@ import java.util.Comparator;
 import java.awt.Color;
 
 class RGBComparator implements Comparator<Color>{
+
+	public RGBComparator(){}
+	
 	@Override
 	public int compare(Color c1, Color c2){
 		if(c1.getRed() < c2.getRed())

@@ -3,6 +3,8 @@ import java.io.File;
 import java.io.IOException;
 import javax.imageio.ImageIO;
 import java.util.HashMap;
+import java.util.TreeSet;
+import java.util.Comparator;
 import java.util.Map;
 import java.util.Iterator;
 import java.awt.Color;
@@ -14,6 +16,7 @@ class VFI_Map
   private double Vmax;
   private double Dmax; //maximum distance from center of color hue to edge
   private BufferedImage image; //The actual image of the color key
+  private TreeSet<Color> RGB_Finder = new TreeSet<>(new RGBComparator()); //used to find closest color in map
   private HashMap<Integer,Double> RGB_VelMap = new HashMap<>(); //mapping from a color to a velocity
   private HashMap<Integer,int[]> RGB_DisMap = new HashMap<>(); //mapping from a color to a distance from the center of the key
   private HashMap<Integer, Double> RGB_VxMap = new HashMap<>(); //mapping from a color to Vx
@@ -52,7 +55,7 @@ class VFI_Map
           RGB_DisMap.put(image.getRGB(j,i), dis);
           RGB_VxMap.put(image.getRGB(j,i), Vx);
           RGB_VyMap.put(image.getRGB(j,i), Vy);
-
+          RGB_Finder.add(new Color(image.getRGB(j,i), true));
         }
       }
     }
@@ -66,33 +69,30 @@ class VFI_Map
   *****************************************************************************************/
   public int searchMap(int color)
   {
-    Iterator it = RGB_VelMap.entrySet().iterator();
-      //minDifference = big value to make sure that the value is set when searching the map
-      //Value will store the RGB color from the map that is closest to the selected color
-    float minDifference = 10000000;
-    int value = 0;
-
-       //
+    //convert passed color to hsl format for comparison
     float[] selectedHSL = new float[3];
     Color sel = new Color(color);
     Color.RGBtoHSB(sel.getRed(), sel.getGreen(), sel.getBlue(), selectedHSL);
 
-    while (it.hasNext())
-    {
-      Map.Entry pair = (Map.Entry)it.next();
+    //get ceiling value from set that is least element >= sel
+    float[] hsl = new float[3];
+    Color ceiling = RGB_Finder.ceiling(sel);
+    Color.RGBtoHSB(ceiling.getRed(), ceiling.getGreen(), ceiling.getBlue(), hsl);
+    float ceilingDif = Math.abs(selectedHSL[0] - hsl[0]) + Math.abs(selectedHSL[1] - hsl[1]) + Math.abs(selectedHSL[2] - hsl[2]);
 
-      Color map = new Color((int)pair.getKey());
-      float[] hsl = new float[3];
-      Color.RGBtoHSB(map.getRed(), map.getGreen(), map.getBlue(), hsl);
-      float difference = Math.abs(selectedHSL[0] - hsl[0]) + Math.abs(selectedHSL[1] - hsl[1]) + Math.abs(selectedHSL[2] - hsl[2]);
+    if(ceilingDif == 0.0) return ceiling.getRGB();
+    
+    //get floor value from set that is greatest element <= sel
+    hsl = new float[3];
+    Color floor = RGB_Finder.floor(sel);
+    Color.RGBtoHSB(floor.getRed(), floor.getGreen(), floor.getBlue(), hsl);
+    float floorDif = Math.abs(selectedHSL[0] - hsl[0]) + Math.abs(selectedHSL[1] - hsl[1]) + Math.abs(selectedHSL[2] - hsl[2]);
+    if(floorDif == 0.0) return floor.getRGB();
 
-      if(difference < minDifference)
-      {
-        minDifference = difference;
-        value = (int)pair.getKey();
-      }
-    }
-    return value;
+    if(ceilingDif <= floorDif)
+      return ceiling.getRGB();
+    else
+      return floor.getRGB();
   }
 
   /*************************************************************************************
