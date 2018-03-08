@@ -77,18 +77,28 @@ class VFI_Map
     //get ceiling value from set that is least element >= sel
     float[] hsl = new float[3];
     Color ceiling = RGB_Finder.ceiling(sel);
-    Color.RGBtoHSB(ceiling.getRed(), ceiling.getGreen(), ceiling.getBlue(), hsl);
-    float ceilingDif = Math.abs(selectedHSL[0] - hsl[0]) + Math.abs(selectedHSL[1] - hsl[1]) + Math.abs(selectedHSL[2] - hsl[2]);
+    float ceilingDif = 1000;
+
+    if(ceiling != null){
+      Color.RGBtoHSB(ceiling.getRed(), ceiling.getGreen(), ceiling.getBlue(), hsl);
+      ceilingDif = Math.abs(selectedHSL[0] - hsl[0]) + Math.abs(selectedHSL[1] - hsl[1]) + Math.abs(selectedHSL[2] - hsl[2]);
+    }
 
     if(ceilingDif == 0.0) return ceiling.getRGB();
     
     //get floor value from set that is greatest element <= sel
     hsl = new float[3];
     Color floor = RGB_Finder.floor(sel);
-    Color.RGBtoHSB(floor.getRed(), floor.getGreen(), floor.getBlue(), hsl);
-    float floorDif = Math.abs(selectedHSL[0] - hsl[0]) + Math.abs(selectedHSL[1] - hsl[1]) + Math.abs(selectedHSL[2] - hsl[2]);
+    float floorDif = 1000;
+
+    if(floor != null){
+      Color.RGBtoHSB(floor.getRed(), floor.getGreen(), floor.getBlue(), hsl);
+      floorDif = Math.abs(selectedHSL[0] - hsl[0]) + Math.abs(selectedHSL[1] - hsl[1]) + Math.abs(selectedHSL[2] - hsl[2]);
+    }
+
     if(floorDif == 0.0) return floor.getRGB();
 
+    //return the color with the lowest difference
     if(ceilingDif <= floorDif)
       return ceiling.getRGB();
     else
