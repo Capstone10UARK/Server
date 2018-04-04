@@ -1,8 +1,6 @@
 import java.util.*;
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
-import java.awt.Color;
-import java.text.DecimalFormat;
 import java.io.IOException;
 import java.io.File;
 import java.lang.*;
@@ -40,7 +38,8 @@ class ImageProcessor extends Thread {
 
 			try {
 				loadedImage = ImageIO.read(imageFile);
-				writer.writeOneFile(processSingleImage(loadedImage), frameIndex);
+				Thread thread = new Thread(new SingleImageRunnable(vfi, writer, frameIndex, loadedImage));
+
 			} catch (IOException e) {
 			    System.out.println("Failed to load file index " + Integer.toString(frameIndex));
 			}
@@ -67,42 +66,5 @@ class ImageProcessor extends Thread {
 		System.out.println("Processing took " + processingTimeMin + " minutes and " + processingTimeS + " seconds.");
 	}
 	
-	private ArrayList<Map> processSingleImage(BufferedImage imageToProcess) {
-        
-		ArrayList<Map> listOfVectors = new ArrayList<Map>();
 
-		for(int y = 0; y < imageToProcess.getHeight(); y++)
-		{
-			for(int x = 0; x < imageToProcess.getWidth(); x++)
-			{
-				Color c = new Color(imageToProcess.getRGB(x, y));
-				int color = imageToProcess.getRGB(x, y);
-				float[] hsv = new float[3];
-
-				Color.RGBtoHSB(c.getRed(), c.getGreen(), c.getBlue(), hsv);
-				//If the color is not gray scale (aka "is color")
-				if((hsv[1] > 0.2)&&(hsv[2] > 0.2))
-				{
-					// get the rgb value closes to one represented in the RGB to vector data maps
-					int closestColor = vfi.searchMap(color);
-					HashMap vector = new HashMap();
-					vector.put("x", x);
-					vector.put("y", y);
-					vector.put("Vx", truncate(vfi.getVx(closestColor)));
-					vector.put("Vy", truncate(vfi.getVy(closestColor)));
-					vector.put("speed", truncate(vfi.getVelocity(closestColor)));
-					listOfVectors.add(vector);
-				}
-			}
-		}
-		
-		return listOfVectors;
-	}
-   
-    private double truncate(double value) {
-		DecimalFormat df = new DecimalFormat("#.##");
-		String trunc = df.format(value);
-
-		return Double.parseDouble(trunc);
-    }   
 }
