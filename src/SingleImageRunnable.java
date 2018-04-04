@@ -3,11 +3,11 @@ import java.awt.image.BufferedImage;
 import java.awt.Color;
 import java.text.DecimalFormat;
 
-class SingleImageRunnable implements Runnable {
+class SingleImageRunnable extends NotifyingRunnable {
 
     private static VFI_Map vfi;
     private CsvWriter writer;
-    private int frameIndex;
+    public int frameIndex;
     private BufferedImage loadedImage;
 
     public SingleImageRunnable(VFI_Map vfiPassed, CsvWriter writerPassed, int frameIndexPassed, BufferedImage loadedImagePassed) {
@@ -17,7 +17,7 @@ class SingleImageRunnable implements Runnable {
         loadedImage = loadedImagePassed; 
     }
 
-    public void run() {
+    public void doWork() {
         writer.writeOneFile(processSingleImage(loadedImage), frameIndex);
     }
 
